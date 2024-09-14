@@ -7,7 +7,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 function generateContent($image_data, $mime_type) {
-    $api_key = "AIzaSyCqrGOsG-GnKnRSma-LTIKwDHO-D6edXw8";
+    $api_key = "API_KEY_HERE";
     $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-exp-0827:generateContent?key=" . $api_key;
 
     $prompt = "Identify this plant and provide the following information in the exact format specified, without any additional text:\n" .
