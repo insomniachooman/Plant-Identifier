@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Plant Identifier</title>
+        <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        />
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-image: url("https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80");
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 40px;
+                text-align: center;
+                color: #ffffff;
+                background-color: rgba(31, 58, 72, 0.8);
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            }
+            h1 {
+                color: #ffffff;
+                font-size: 36px;
+                margin-bottom: 20px;
+            }
+            .button {
+                background-color: #21b0aa;
+                color: white;
+                padding: 15px 30px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 18px;
+                margin: 10px;
+            }
+            .upload-section {
+                margin-bottom: 40px;
+            }
+            .how-it-works {
+                display: flex;
+                justify-content: space-around;
+                margin-top: 40px;
+            }
+            .how-it-works div {
+                background-color: rgba(46, 71, 83, 0.8);
+                border-radius: 8px;
+                padding: 20px;
+                width: 30%;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                cursor: pointer;
+            }
+            .how-it-works h3 {
+                color: #21b0aa;
+                margin-bottom: 15px;
+            }
+            .how-it-works p {
+                color: #c1d8e0;
+            }
+            .file-input {
+                display: none;
+            }
+            .file-label {
+                background-color: #21b0aa;
+                color: white;
+                padding: 15px 30px;
+                border-radius: 6px;
+                cursor: pointer;
+                display: inline-block;
+            }
+            .file-label i {
+                margin-right: 8px;
+            }
+            .submit-button {
+                background-color: #21b0aa;
+                color: white;
+                border: none;
+                padding: 15px 30px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 18px;
+                margin-left: 10px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .submit-button i {
+                margin-right: 10px;
+            }
+            .submit-button:disabled {
+                background-color: #a5d6a7;
+                cursor: not-allowed;
+            }
+            .result-section {
+                display: flex;
+                justify-content: space-between;
+                background-color: rgba(46, 71, 83, 0.8);
+                border-radius: 8px;
+                padding: 20px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-top: 20px;
+            }
+            .image-preview {
+                flex: 1;
+                margin-right: 20px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .image-preview img {
+                max-width: 100%;
+                max-height: 400px;
+                border-radius: 4px;
+            }
+            .ai-output-container {
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .ai-output {
+                background-color: #ffffff;
+                border-radius: 12px;
+                padding: 25px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                color: #333;
+                text-align: left;
+                max-width: 500px;
+                width: 100%;
+            }
+            .loading-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100px;
+            }
+            .loading-spinner {
+                width: 50px;
+                height: 50px;
+                border: 5px solid #f3f3f3;
+                border-top: 5px solid #21b0aa;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            .loading-text {
+                margin-left: 15px;
+                font-size: 18px;
+                color: #21b0aa;
+                animation: pulse 1.5s infinite;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            @keyframes pulse {
+                0% { opacity: 0.5; }
+                50% { opacity: 1; }
+                100% { opacity: 0.5; }
+            }
+            .footer {
+                margin-top: 40px;
+            }
+            .contact-button {
+                background-color: #21b0aa;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 16px;
+                text-decoration: none;
+                display: inline-block;
+            }
+            @keyframes dots {
+                0%,
+                20% {
+                    content: ".";
+                }
+                40% {
+                    content: "..";
+                }
+                60% {
+                    content: "...";
+                }
+                80%,
+                100% {
+                    content: "";
+                }
+            }
+            .processing::after {
+                content: "";
+                animation: dots 1.5s infinite;
+            }
+            .plant-name {
+                color: #1b5e20;
+                font-size: 28px;
+                margin-bottom: 5px;
+            }
+            .scientific-name {
+                font-style: italic;
+                color: #4caf50;
+                margin-bottom: 15px;
+                font-size: 18px;
+                font-weight: bold;
+            }
+            .plant-description {
+                margin-bottom: 20px;
+                line-height: 1.6;
+                color: #333;
+                text-align: justify;
+            }
+            .chat-button {
+                background-color: #21b0aa;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 16px;
+                margin-top: 20px;
+            }
+            .chat-container {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 300px;
+                height: 400px;
+                background-color: rgba(255, 255, 255, 0.9);
+                border-radius: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+            .chat-header {
+                background-color:#21b0aa;
+                color: white;
+                padding: 10px;
+                font-weight: bold;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .chat-header h3 {
+                margin: 0;
+                font-size: 16px;
+            }
+            .chat-header button {
+                background: none;
+                border: none;
+                color: white;
+                cursor: pointer;
+                font-size: 20px;
+            }
+            .chat-messages {
+                flex-grow: 1;
+                overflow-y: auto;
+                padding: 10px;
+                display: flex;
+                flex-direction: column;
+                background-color: rgba(255, 255, 255, 0.7);
+            }
+            .message {
+                max-width: 80%;
+                padding: 8px 12px;
+                margin-bottom: 10px;
+                border-radius: 18px;
+                font-size: 14px;
+                line-height: 1.4;
+                text-align: left;
+            }
+            .message.user {
+                align-self: flex-end;
+                background-color: #81C784;
+                color: white;
+                border-bottom-right-radius: 4px;
+            }
+            .message.ai {
+                align-self: flex-start;
+                background-color: #C8E6C9;
+                color: #333;
+                border-bottom-left-radius: 4px;
+            }
+            .message p {
+                margin: 0 0 10px 0;
+            }
+            .message ul, .message ol {
+                margin: 0 0 10px 0;
+                padding-left: 20px;
+            }
+            .message li {
+                margin-bottom: 5px;
+            }
+            .message code {
+                background-color: #e0e0e0;
+                padding: 2px 4px;
+                border-radius: 4px;
+                font-family: monospace;
+            }
+            .message pre {
+                background-color: #e0e0e0;
+                padding: 10px;
+                border-radius: 4px;
+                overflow-x: auto;
+            }
+            .message blockquote {
+                border-left: 3px solid #ccc;
+                margin: 0 0 10px 0;
+                padding-left: 10px;
+                color: #666;
+            }
+            .message h1, .message h2, .message h3, .message h4, .message h5, .message h6 {
+                margin: 15px 0 10px 0;
+            }
+            .message table {
+                border-collapse: collapse;
+                margin-bottom: 10px;
+            }
+            .message th, .message td {
+                border: 1px solid #ccc;
+                padding: 5px;
+            }
+            .message img {
+                max-width: 100%;
+                height: auto;
+            }
+            .chat-input {
+                display: flex;
+                padding: 10px;
+                background-color: #E8F5E9;
+            }
+            .chat-input input {
+                flex-grow: 1;
+                padding: 8px 12px;
+                border: 1px solid #A5D6A7;
+                border-radius: 20px;
+                font-size: 14px;
+            }
+            .chat-input button {
+                background-color: transparent;
+                border: none;
+                color: #4CAF50;
+                font-size: 24px;
+                cursor: pointer;
+                padding: 0 10px;
+            }
+            .chat-input button:hover {
+                color: #2E7D32;
+            }
+            .logout-button {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                background-color: #ff4d4d;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: background-color 0.3s;
+            }
+            .logout-button:hover {
+                background-color: #ff3333;
+            }
+            .profile-button {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                display: flex;
+                align-items: center;
+                background-color: #21b0aa;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 16px;
+                text-decoration: none;
+            }
+            .error-message {
+                color: #ff4d4d;
+                font-weight: bold;
+            }
+            .analyzing {
+                font-weight: bold;
+                color: #21b0aa;
+            }
+            .dots::after {
+                content: '';
+                animation: dots 1.5s steps(5, end) infinite;
+            }
+            @keyframes dots {
+                0%, 20% { content: ''; }
+                40% { content: '.'; }
+                60% { content: '..'; }
+                80%, 100% { content: '...'; }
+            }
+            .username-container {
+                position: relative;
+                display: inline-block;
+            }
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: #f9f9f9;
+                min-width: 160px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                padding: 12px 16px;
+                z-index: 1;
+                border-radius: 6px;
+                text-align: left;
+            }
+            .dropdown-content a {
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+            }
+            .dropdown-content a:hover {
+                background-color: #f1f1f1;
+            }
+            .username-container:hover .dropdown-content {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="text/babel">
+            function App() {
+                const [file, setFile] = React.useState(null);
+                const [result, setResult] = React.useState("");
+                const [loading, setLoading] = React.useState(false);
+                const [preview, setPreview] = React.useState(null);
+                const [isChatOpen, setIsChatOpen] = React.useState(false);
+                const [chatMessages, setChatMessages] = React.useState([]);
+                const [chatInput, setChatInput] = React.useState("");
+                const [isLoggedIn, setIsLoggedIn] = React.useState(true);
+                const [username, setUsername] = React.useState("");
+
+                React.useEffect(() => {
+                    fetchUserInfo();
+                }, []);
+
+                const fetchUserInfo = async () => {
+                    try {
+                        const response = await fetch('get_user_info.php');
+                        const data = await response.json();
+                        if (data.success) {
+                            setIsLoggedIn(true);
+                            setUsername(data.name);
+                        } else {
+                            setIsLoggedIn(false);
+                        }
+                    } catch (error) {
+                        console.error('Error fetching user info:', error);
+                        setIsLoggedIn(false);
+                    }
+                };
+
+                const handleFileChange = (e) => {
+                    const selectedFile = e.target.files[0];
+                    setFile(selectedFile);
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => setPreview(e.target.result);
+                    reader.readAsDataURL(selectedFile);
+                };
+
+                const handleSubmit = async (e, selectedFile = null) => {
+                    e.preventDefault();
+                    const fileToUpload = selectedFile || file;
+                    if (!fileToUpload) {
+                        alert("Please select an image file");
+                        return;
+                    }
+
+                    setLoading(true);
+                    const formData = new FormData();
+                    formData.append("image", fileToUpload);
+
+                    try {
+                        const response = await fetch('identify.php', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await response.json();
+                        if (data.error) {
+                            setResult(`The uploaded image does not appear to be a plant. Please upload an image of a plant.`);
+                            setPreview(null); // Clear the preview if it's not a plant
+                        } else {
+                            setResult(data.result);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        setResult('An error occurred while processing the request.');
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+
+                const renderImagePreview = () => {
+                    if (preview) {
+                        return (
+                            <div className="image-preview">
+                                <img src={preview} alt="Uploaded plant" />
+                            </div>
+                        );
+                    }
+                    return null;
+                };
+
+                const renderAIOutput = () => {
+                    if (loading) {
+                        return (
+                            <div className="loading-container">
+                                <div className="loading-spinner"></div>
+                                <p className="loading-text">
+                                    <span className="analyzing">AI Analyzing</span>
+                                    <span className="dots"></span>
+                                </p>
+                            </div>
+                        );
+                    }
+                    if (!result) return null;
+
+                    if (result.startsWith('The uploaded image does not appear to be a plant. Please upload an image of a plant.')) {
+                        return (
+                            <div className="ai-output">
+                                <p className="error-message">{result}</p>
+                            </div>
+                        );
+                    }
+
+                    const lines = result.split('\n').filter(line => line.trim() !== '');
+                    const plantName = lines[0] || 'Unknown Plant';
+                    const scientificName = lines[1] || 'Scientific name not available';
+                    const description = lines[2] || 'No description available';
+
+                    return (
+                        <div className="ai-output">
+                            <h2 className="plant-name">{plantName}</h2>
+                            <p className="scientific-name">{scientificName.replace(/\*/g, '')}</p>
+                            <p className="plant-description">{description}</p>
+                            <button className="chat-button" onClick={() => openChat(description)}>
+                                Know more about this plant &rarr;
+                            </button>
+                        </div>
+                    );
+                };
+
+                const openChat = (description) => {
+                    setIsChatOpen(true);
+                    const initialMessage = { sender: 'ai', text: `Here's what I know about this plant:\n\n${description}\n\nWhat would you like to know more about?` };
+                    setChatMessages([initialMessage]);
+                };
+
+                const parseMarkdown = (text) => {
+                    return marked.parse(text);
+                };
+
+                const renderChat = () => {
+                    if (!isChatOpen) return null;
+
+                    return (
+                        <div className="chat-container" style={{backgroundImage: `url(${preview})`, backgroundBlendMode: 'overlay'}}>
+                            <div className="chat-header">
+                                <h3>Plant Details Chat</h3>
+                                <button onClick={() => setIsChatOpen(false)}>&times;</button>
+                            </div>
+                            <div className="chat-messages">
+                                {chatMessages.map((message, index) => (
+                                    <div key={index} className={`message ${message.sender}`}>
+                                        <div dangerouslySetInnerHTML={{ __html: parseMarkdown(message.text) }} />
+                                    </div>
+                                ))}
+                            </div>
+                            <form onSubmit={handleChatSubmit} className="chat-input">
+                                <input
+                                    type="text"
+                                    placeholder="Ask about the plant..."
+                                    value={chatInput}
+                                    onChange={(e) => setChatInput(e.target.value)}
+                                />
+                                <button type="submit">
+                                    <i className="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    );
+                };
+
+                const handleChatSubmit = async (e) => {
+                    e.preventDefault();
+                    if (!chatInput.trim()) return;
+
+                    const newMessage = { sender: 'user', text: chatInput };
+                    setChatMessages([...chatMessages, newMessage]);
+                    setChatInput('');
+
+                    try {
+                        const response = await fetch('chat.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ message: chatInput, plantInfo: result }),
+                        });
+                        const data = await response.json();
+                        setChatMessages(prevMessages => [...prevMessages, newMessage, { sender: 'ai', text: data.response }]);
+                    } catch (error) {
+                        console.error('Error:', error);
+                        setChatMessages(prevMessages => [...prevMessages, newMessage, { sender: 'ai', text: 'Sorry, there was an error processing your request.' }]);
+                    }
+                };
+
+                const handleLogout = async () => {
+                    try {
+                        const response = await fetch('logout.php', {
+                            method: 'POST',
+                            credentials: 'include'
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            setIsLoggedIn(false);
+                            // Redirect to the index page
+                            window.location.href = data.redirect;
+                        } else {
+                            alert('Logout failed: ' + data.message);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred during logout.');
+                    }
+                };
+
+                if (!isLoggedIn) {
+                    return <div>Please log in to use the Plant Identifier.</div>;
+                }
+
+                return (
+                    <div className="container">
+                        <button className="logout-button" onClick={handleLogout}>Logout</button>
+                        <a href="dashboard.php" className="profile-button">
+                            <div className="username-container">
+                                <span id="username">{username || "Dashboard"}</span>
+                                <div className="dropdown-content">
+                                    <a href="dashboard.php">Dashboard</a>
+                                    <a href="profile.php">Edit Profile</a>
+                                </div>
+                            </div>
+                        </a>
+                        <h1>Plant Identifier</h1>
+                        <div className="upload-section">
+                            <form onSubmit={handleSubmit}>
+                                <input
+                                    type="file"
+                                    onChange={handleFileChange}
+                                    accept="image/*"
+                                    id="file-input"
+                                    className="file-input"
+                                />
+                                <label
+                                    htmlFor="file-input"
+                                    className="file-label"
+                                >
+                                    <i className="fas fa-camera"></i>
+                                    Choose Image
+                                </label>
+                                <button
+                                    type="submit"
+                                    className={`submit-button ${loading ? "processing" : ""}`}
+                                    disabled={loading || !file}
+                                    onClick={handleSubmit}
+                                >
+                                    <i className="fas fa-leaf"></i>
+                                    {loading ? "Processing" : "Identify Plant"}
+                                </button>
+                            </form>
+                        </div>
+                        {(preview || result) && (
+                            <div className="result-section">
+                                {renderImagePreview()}
+                                <div className="ai-output-container">
+                                    {renderAIOutput()}
+                                </div>
+                            </div>
+                        )}
+                        {renderChat()}
+                        <div className="how-it-works">
+                            <div onClick={() => document.getElementById('file-input').click()}>
+                                <h3>
+                                    <i className="fas fa-camera"></i> Upload
+                                    Image
+                                </h3>
+                                <p>
+                                    Take a photo or upload an existing image of
+                                    a plant you want to identify.
+                                </p>
+                                <input
+                                    type="file"
+                                    onChange={handleFileChange}
+                                    accept="image/*"
+                                    style={{display: 'none'}}
+                                />
+                            </div>
+                            <div onClick={handleSubmit}>
+                                <h3>AI Analysis</h3>
+                                <p>
+                                    Our advanced AI analyzes the image to
+                                    identify the plant species.
+                                </p>
+                            </div>
+                            <div>
+                                <h3>
+                                    <i className="fas fa-info-circle"></i> Get
+                                    Information
+                                </h3>
+                                <p>
+                                    Receive detailed information about the
+                                    plant, including its name, scientific name,
+                                    and characteristics.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="footer">
+                            <a
+                                href="https://t.me/Masfiqthe1"
+                                className="contact-button"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Contact Developer
+                            </a>
+                        </div>
+                    </div>
+                );
+            }
+
+            ReactDOM.render(<App />, document.getElementById("root"));
+        </script>
+    </body>
+</html>
